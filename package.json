@@ -1,0 +1,24 @@
+{
+  "name": "mmm-bumblebee",
+  "version": "1.0.0",
+  "description": "Hotword detector for MagicMirror",
+  "main": "MMM-Bumblebee.js",
+  "scripts": {
+    "_install": "apt install rec"
+  },
+  "keywords": [
+    "magic mirror",
+    "module",
+    "hotword",
+    "bumblebee",
+    "smart mirror",
+    "voice",
+    "jarvis"
+  ],
+  "author": "anonym-tsk",
+  "license": "MIT",
+  "dependencies": {
+    "bumblebee-hotword-node": "^0.0.4",
+    "jaxcore": "0.0.2"
+  }
+}
