@@ -49,7 +49,7 @@ npm install
       },
       hey_edison: {
         sensitivity: 0.9,
-        integrations: ['alert']
+        integrations: ['alert'],
         action: function(hotword) {
           this.sendNotification('CUSTOM_NOTIFICATION', hotword);
         }
