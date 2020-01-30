@@ -54,7 +54,7 @@ npm install
           this.sendNotification('CUSTOM_NOTIFICATION', hotword);
         }
       }
-    }
+    },
     ui: true,
     colors: {
       standby: '#aaa',
