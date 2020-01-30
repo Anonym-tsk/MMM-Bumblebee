@@ -1,0 +1,16 @@
+#MMMBB {
+    display: flex;
+    font-size: 25px;
+    height: 34px;
+    line-height: 34px;
+}
+#MMMBB > svg {
+    height: 100%;
+}
+#MMMBB > div {
+    max-width: 500px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-left: 4px;
+}

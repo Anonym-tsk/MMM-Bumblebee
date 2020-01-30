@@ -25,6 +25,7 @@ module.exports = NodeHelper.create({
     start: function() {
         if (!findExec('rec')) {
             this._error(`Not started: 'rec' is not installed`);
+            this.sendSocketNotification('FATAL_ERROR');
             return;
         }
 
@@ -33,7 +34,7 @@ module.exports = NodeHelper.create({
 
         this.bumblebee.on('hotword', (hotword) => {
             this._log(`Hotword detected: '${hotword}'`);
-            this.sendSocketNotification('HOTWORD_DETECTED', hotword)
+            this.sendSocketNotification('HOTWORD_DETECTED', hotword);
         });
 
         this.bumblebee.on('end', () => {
@@ -72,6 +73,9 @@ module.exports = NodeHelper.create({
             try {
                 const data = require(`./hotwords/${hotword}`);
                 this.bumblebee.addHotword(hotword, data, opts.sensitivity || config.sensitivity);
+
+                const word = hotword.replace(/[^a-zA-Z]+/g, ' ');
+                opts.word = word.charAt(0).toUpperCase() + word.slice(1);
             } catch (e) {
                 this._warn(`Hotword '${hotword}' not found`);
                 delete config.hotwords[hotword];
@@ -82,11 +86,13 @@ module.exports = NodeHelper.create({
         if (!Object.keys(config.hotwords).length) {
             this._isReady = false;
             this._error('Not started: hotwords are not configured');
+            this.sendSocketNotification('FATAL_ERROR');
             return;
         }
 
         this._isReady = true;
         this._log('Ready');
+        this.sendSocketNotification('READY', config.hotwords);
 
         this._start();
     },
