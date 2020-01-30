@@ -1,6 +1,6 @@
 {
   "name": "mmm-bumblebee",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Hotword detector for MagicMirror",
   "main": "MMM-Bumblebee.js",
   "scripts": {
@@ -18,7 +18,6 @@
   "author": "anonym-tsk",
   "license": "MIT",
   "dependencies": {
-    "bumblebee-hotword-node": "^0.0.4",
-    "jaxcore": "0.0.2"
+    "bumblebee-hotword-node": "0.0.3"
   }
 }
