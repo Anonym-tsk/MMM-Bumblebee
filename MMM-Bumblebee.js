@@ -1,31 +1,16 @@
 // TODO: detect rec is installed
 
-const INTEGRATION = {
-    ASSISTANT: 'MMM-AssistantMk2'
-};
-const INTEGRATION_ACTION = {};
-INTEGRATION_ACTION[INTEGRATION.ASSISTANT] = function() {
-    this.sendSocketNotification('PAUSE');
-    this.sendNotification('ASSISTANT_ACTIVATE', {profile: 'default', type: 'MIC'});
+const INTEGRATIONS = {
+    'MMM-AssistantMk2': function() {
+        this.sendSocketNotification('PAUSE');
+        this.sendNotification('ASSISTANT_ACTIVATE', {profile: 'default', type: 'MIC'});
+    }
 };
 
 Module.register('MMM-Bumblebee', {
     defaults: {
         sensitivity: 0.8,
-        hotwords: [
-            {
-                hotword: 'bumblebee',
-                sensitivity: 0.7,
-                integration: INTEGRATION.ASSISTANT
-            },
-            {
-                hotword: 'magenta',
-                sensitivity: 0.7,
-                action: () => {
-                    Log.log('Magenta!');
-                }
-            }
-        ]
+        hotwords: {}
     },
 
     start: function() {
@@ -59,15 +44,16 @@ Module.register('MMM-Bumblebee', {
     },
 
     _doAction: function(hotword) {
-        for (const data of this.config.hotwords) {
-            if (data.hotword === hotword) {
-                if (data.integration && INTEGRATION_ACTION.hasOwnProperty(data.integration)) {
-                    INTEGRATION_ACTION[data.integration].call(this);
-                } else if (data.action) {
-                    data.action.call(this);
-                }
-                break;
-            }
+        if (!this.config.hotwords.hasOwnProperty(hotword)) {
+            // Impossible case
+            return;
+        }
+
+        const data = this.config.hotwords[hotword];
+        if (data.integration && INTEGRATIONS.hasOwnProperty(data.integration)) {
+            INTEGRATIONS[data.integration].call(this, hotword);
+        } else if (data.action) {
+            data.action.call(this, hotword);
         }
     }
 });

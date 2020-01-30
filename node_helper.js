@@ -13,21 +13,26 @@ module.exports = NodeHelper.create({
         console.log(`[${this.name}]`, ...args);
     },
 
+    _warn: function(...args) {
+        console.warn(`[${this.name}]`, ...args);
+    },
+
+    _error: function(...args) {
+        console.error(`[${this.name}]`, ...args);
+    },
+
     start: function() {
         this.bumblebee = new BumbleBee({hotwords: []});
         this.bumblebee.setSensitivity(0.8);
 
         this.bumblebee.on('hotword', (hotword) => {
-            this._log('Hotword Detected', hotword);
+            this._log(`Hotword detected: '${hotword}'`);
             this.sendSocketNotification('HOTWORD_DETECTED', hotword)
         });
 
         this.bumblebee.on('end', () => {
             this._log('Ended');
         });
-
-        this._isReady = true;
-        this._log('Ready');
     },
 
     stop: function() {
@@ -52,11 +57,27 @@ module.exports = NodeHelper.create({
     },
 
     _init: function(config) {
-        for (const hotword of config.hotwords) {
-            const data = require(`./hotwords/${hotword.hotword}`);
-            this.bumblebee.addHotword(hotword.hotword, data, hotword.sensitivity);
+        // Load hotwords
+        for (const [hotword, opts] of Object.entries(config.hotwords)) {
+            try {
+                const data = require(`./hotwords/${hotword}`);
+                this.bumblebee.addHotword(hotword, data, opts.sensitivity || config.sensitivity);
+            } catch (e) {
+                this._warn(`Hotword '${hotword}' not found`);
+                delete config.hotwords[hotword];
+            }
         }
-        this.config = config;
+
+        // Check hotwords loaded
+        if (!Object.keys(config.hotwords).length) {
+            this._isReady = false;
+            this._error('Not started - hotwords are not configured');
+            return;
+        }
+
+        this._isReady = true;
+        this._log('Ready');
+
         this._start();
     },
 
