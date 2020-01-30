@@ -2,6 +2,9 @@ const INTEGRATIONS = {
     'MMM-AssistantMk2': function() {
         this.sendSocketNotification('PAUSE');
         this.sendNotification('ASSISTANT_ACTIVATE', {profile: 'default', type: 'MIC'});
+    },
+    'alert': function(hotword) {
+        this.sendNotification('SHOW_ALERT', {type: 'notification', title: 'Hotword detected', message: this.config.hotwords[hotword].word, timer: this.config.delay});
     }
 };
 
@@ -127,9 +130,14 @@ Module.register('MMM-Bumblebee', {
         }
 
         const data = this.config.hotwords[hotword];
-        if (data.integration && INTEGRATIONS.hasOwnProperty(data.integration)) {
-            INTEGRATIONS[data.integration].call(this, hotword);
-        } else if (data.action) {
+
+        for (const integration of (data.integrations || [])) {
+            if (INTEGRATIONS.hasOwnProperty(integration)) {
+                INTEGRATIONS[integration].call(this, hotword);
+            }
+        }
+
+        if (data.action) {
             data.action.call(this, hotword);
         }
     }
