@@ -11,7 +11,9 @@
     "bumblebee",
     "smart mirror",
     "voice",
-    "jarvis"
+    "jarvis",
+    "picovoice",
+    "jaxcore"
   ],
   "author": "anonym-tsk",
   "license": "MIT",
