@@ -1,5 +1,3 @@
-// TODO: detect rec is installed
-
 const INTEGRATIONS = {
     'MMM-AssistantMk2': function() {
         this.sendSocketNotification('PAUSE');

@@ -1,5 +1,6 @@
 'use strict';
 
+const findExec = require('find-exec');
 const NodeHelper = require('node_helper');
 const BumbleBee = require('bumblebee-hotword-node');
 
@@ -22,6 +23,11 @@ module.exports = NodeHelper.create({
     },
 
     start: function() {
+        if (!findExec('rec')) {
+            this._error(`Not started: 'rec' is not installed`);
+            return;
+        }
+
         this.bumblebee = new BumbleBee({hotwords: []});
         this.bumblebee.setSensitivity(0.8);
 
@@ -57,6 +63,10 @@ module.exports = NodeHelper.create({
     },
 
     _init: function(config) {
+        if (!this.bumblebee) {
+            return;
+        }
+
         // Load hotwords
         for (const [hotword, opts] of Object.entries(config.hotwords)) {
             try {
@@ -71,7 +81,7 @@ module.exports = NodeHelper.create({
         // Check hotwords loaded
         if (!Object.keys(config.hotwords).length) {
             this._isReady = false;
-            this._error('Not started - hotwords are not configured');
+            this._error('Not started: hotwords are not configured');
             return;
         }
 
